@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Self-Assessment Test</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="dist/jquery.convform.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="demo.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body >
+	<section id="demo" ng-app="myApp" ng-controller="myCtrl">
+		<div class="vertical-align" id="chats" style="opacity:0.2">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-6 col-sm-offset-3 col-xs-offset-0">
+						<div class="card no-border" style="background-color: #292323">
+							<div id="chat" class="conv-form-wrapper">
+								<form action="submit.php" method="POST" class="hidden">
+									<input  data-conv-question="Please note that information from this chat will be used for monitoring and will be stored." data-no-answer="true">
+									<select data-conv-question="Have you ever had any of the following: "multiple>
+										<option value="Diabetes">Diabetes</option>
+										<option value="Hypertension">Hypertension</option>
+										<option value="Lung Disease">Lung Disease</option>
+										<option value="Heart Disease">Heart Disease</option>
+										<option value="None of the above">None of the above</option>
+									</select>
+									<input  data-conv-question="Are you experiencing any of the symptoms? " data-no-answer="true">
+									<select  data-callback="storeState" name="symptoms" data-conv-question="Like Cough , Fever , Difficulty in breathing or loss of senses of smell and taste">
+										<option value="Yes">Yes</option>
+										<option value="No">No</option>
+									</select>
+									<div data-conv-fork="symptoms">			
+									<div data-conv-case ="Yes">
+	                                        <select data-conv-question="Which of the following apply to you?" >
+												<option value="Travelled internationally in the last 14 days">Travelled internationally in the last 14 days</option>
+												<option value="Recently interacted or lived or currently living with someone who has tested positive for COVID-19">Recently interacted or lived or currently living with someone who has tested positive for COVID-19</option>
+												<option value="Am a healthcare worker">Am a healthcare worker</option>
+												<option value="None of the above">None of the above</option>
+											</select>
+											<select data-conv-question="If the information provided by you is accurate, it indicates that you are either unwell or at risk" name="End">
+												<option value="Unwell">Ok!</option>
+											</select>
+									</div>
+									<div data-conv-case="No">
+										<select name="international" data-callback="storeState" data-conv-question="Have you travelled anywhere internationally in the last 28-45 days?">
+											<option value="Yes">Yes</option>
+											<option value="No">No</option>
+										</select>	
+										<div data-conv-fork="international">
+											<div data-conv-case="Yes">
+												<select data-conv-question="If the information provided by you is accurate, it indicates that you are either unwell or at risk" name="End">
+													<option value="Unwell">Ok!</option>
+												</select>
+											</div>
+											<div data-conv-case="No">
+												<select data-conv-question="Which of the following apply to you?" name="condition">
+													<option value="Recently interacted or lived or currently living with someone who has tested positive for COVID-19">Recently interacted or lived or currently living with someone who has tested positive for COVID-19</option>
+													<option value="Am a healthcare worker and i examined a COVID-19 confirmed case without protective gear">Am a healthcare worker and i examined a COVID-19 confirmed case without protective gear.</option>
+													<option value="None of above">None of the above</option>
+												</select>
+												<div data-conv-fork="condition" >
+													<div data-conv-case ="Recently interacted or lived or currently living with someone who has tested positive for COVID-19">
+														<select data-conv-question="When did this interaction take place? " >
+															<option value="Less than 5 days ago">Less than 5 days ago</option>
+															<option value="Greater than 5 days ago">Greater than 5 days ago</option>
+															<option value="Greater than 14 days ago">Greater than 14 days ago</option>
+														</select>
+														<select data-conv-question="If the information provided by you is accurate, it indicates that you are either unwell or at risk" name="End">
+															<option value="Unwell">Ok!</option>
+														</select>
+													</div>
+													<div data-conv-case ="Am a healthcare worker and i examined a COVID-19 confirmed case without protective gear">
+														<select data-conv-question="When did this interaction take place? " >
+															<option value="Less than 5 days ago">Less than 5 days ago</option>
+															<option value="Greater than 5 days ago">Greater than 5 days ago</option>
+															<option value="Greater than 14 days ago">Greater than 14 days ago</option>
+														</select>
+														<select data-conv-question="If the information provided by you is accurate, it indicates that you are either unwell or at risk" name="End">
+															<option value="Unwell">Ok!</option>
+														</select>
+													</div>
+													
+													<div data-conv-case="None of above">
+														<select data-conv-question="Your infection risk is low.We recommend you to stay at home to avoid any chance of exposure to Novel Coronavirus." name="End">
+															<option value="Safe">Ok!</option>
+														</select>
+														
+													</div>
+												
+												</div>
+											
+											</div>
+										
+										</div>
+									</div>	
+									</div>
+									
+	                                
+									
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="overlay" id="pop">
+			<div class="popup" style="text-align: center;">
+				<img src="chatbot.png" width="350px" style="filter:grayscale(50%);">
+				<br><br>
+				<h2>Please give correct answers</h2>
+				<div class="content">
+				Accurate answers help us- help you better. <br >Be a responsible citizen.<br><br>
+			    <b>Please note that information from this chat will be used for the self-assessment test for COVID-19.</b>
+				<br>
+				<button onclick="view()" id="mybtn">Ok,Got it</button>
+			</div>
+			</div>
+		</div>
+		
+	</section>
+		<script type="text/javascript" src="jquery-1.12.3.min.js"></script>
+		<script type="text/javascript" src="dist/autosize.min.js"></script>
+		<script type="text/javascript" src="dist/jquery.convform.js"></script>
+		<script>
+			
+			function view() {
+				$("#pop").hide();
+                document.getElementById('chats').setAttribute('style', 'opacity:1');
+			}
+			var rollbackTo = false;
+		function storeState(stateWrapper, ready) {
+			rollbackTo = stateWrapper.current;
+			ready();
+		}
+			jQuery(function ($) {
+				convForm = $('#chat').convform({ selectInputStyle: 'disable' });
+			});
+		</script>
+</body>
+</html>

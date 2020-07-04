@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <script src="http://momentjs.com/downloads/moment.js"></script>
+</head>
+<style>
+  body{
+    background:black;
+  }
+.conf{
+  display: inline-flex;
+}
+.act{
+  display: inline-flex;
+}
+.rec{
+  display: inline-flex;
+}
+.dec{
+  display: inline-flex;
+}
+.row{
+  margin-top:5vh;
+  margin-left:15vw;
+  margin-right:10vw;
+}
+.dataTables_filter {
+   display: none;
+}
+#state{
+  cursor:pointer;
+}
+.log{
+    background:rgb(255, 132, 0, 0.3);
+    border-style: solid;
+    border-color:rgb(255, 132, 0);
+    color:white;
+}
+
+.log:hover{
+    background:rgb(255, 132, 0, 0.6);
+    border-style: solid;
+    border-color:rgb(255, 255, 255);
+    color:white;
+}
+
+.click{
+    background:rgb(255, 132, 0, 0.6);
+    border-style: solid;
+    border-color:rgb(255, 255, 255);
+    color:white;
+}
+
+.log11,.log12,.log13{
+    background:rgb(245, 49, 213, 0.3);
+    border-style: solid;
+    border-color:rgb(245, 122, 225);
+    color:white;
+}
+
+.log11:hover,.log12:hover,.log13:hover{
+    background:rgb(245, 49, 213, 0.6);
+    border-style: solid;
+    border-color:rgb(245, 122, 225);
+    color:white;
+}
+
+.click1{
+    background:rgb(245, 49, 213, 0.6);
+    border-style: solid;
+    border-color:rgb(245, 122, 225);
+    color:white;
+}
+
+</style>
+<body ng-app="myApp" ng-controller="myCtrl">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+                <h4 style="color:#e83a9a;">Total Cases</h4>
+            </div>
+            <div class="col-sm-3">
+                <h4 style="color:#1165d4;">Active Cases</h4>
+            </div>
+            <div class="col-sm-3">
+                <h4 style="color:#08ad05;">Recoveries</h4>
+            </div>
+            <div class="col-sm-3">
+                <h4 style="color:#d40b0b;">Deaths</h4>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3 conf">
+                <img src="virus.svg" width="40vh;"></img>
+                <span style="color:#e83a9a; font-size:1.3em;">{{ total.tot_con }}</span>&nbsp;
+                <span style="font-size:0.8em; color:red;" ng-if="total.tot_del_con != 0">{{ total.tot_del_con }}<i class='fas fa-arrow-up' style='font-size:16px'></i></span>
+            </div>
+            <div class="col-sm-3 act">
+                <img src="virus1.svg" width="40vh;"></img>
+                <span style="color:#1165d4; font-size:1.3em;">{{ total.tot_act }}</span>&nbsp;
+                <span style="font-size:0.8em; color:blue;">{{ total.tot_del_con-total.tot_del_dec-total.tot_del_rec }}<i class='fas fa-arrow-up' style='color:blue; font-size:16px'></i></span>
+            </div>
+            <div class="col-sm-3 rec">
+                <img src="recovered.svg" width="40vh;"></img>
+                <span style="color:#08ad05; font-size:1.3em;">{{ total.tot_rec }}</span>&nbsp;
+                <span style="font-size:0.8em; color:green;" ng-if="total.tot_del_rec != 0">{{ total.tot_del_rec }}<i class='fas fa-arrow-up' style='color:green; font-size:16px'></i></span>
+            </div>
+            <div class="col-sm-3 dec">
+                <img src="coffin.svg" width="40vh;"></img>
+                <span style="color:#d40b0b; font-size:1.3em;">{{ total.tot_dec   }}</span>&nbsp;
+                <span style="font-size:0.8em; color:red;" ng-if="total.tot_del_dec != 0">{{ total.tot_del_dec }}<i class='fas fa-arrow-up' style='color:red; font-size:16px'></i></span>
+            </div>
+        </div>
+    </div>
+    <div class="container" style="display:block; margin-top:10vh;" data-page-length='32'>
+        <table id="example" class="" style="width:70%;">
+            <thead id="#thead" style="color:#928f8f;">
+            <th>State/Union-Territory</th>
+            <th>Confirmed</th>
+            <th>Active</th>
+            <th>Recovered</th>
+            <th>Deceased</th>
+            </thead>
+            <tbody id="main">
+                <tr ng-repeat="x in result">
+                    <td id="state">{{ x.state }}</td>
+                    <td id="confirm">{{ x.confirmed }} <span style="font-size:0.8em; color:red;" ng-if="x.del_con != 0"><i class='fas fa-arrow-up' style='font-size:16px'></i>{{ x.del_con }}</span></td>
+                    <td id="active">{{ x.active }}</td>
+                    <td id="recovered">{{ x.recovered }} <span style="font-size:0.8em; color:#28a745;" ng-if="x.del_rec != 0"><i class='fas fa-arrow-up' style='font-size:16px; color:#28a745;'></i>{{ x.del_rec }}</span></td>
+                    <td id="death">{{ x.deceased }} <span style="font-size:0.8em; color:gray;" ng-if="x.del_dec != 0"><i class='fas fa-arrow-up' style='font-size:16px; color:gray;'></i> {{ x.del_dec }}</span> </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="container" style="margin-top:5vw;">
+        <div class="chart-container" style="position:relative; display:inline-block; height:5vh; width:60vw; margin-left:15vw; margin-top:10vh;">
+            <button type="button" class="btn log11" style="float:left; display:inline-block; margin-right:3vw;" onclick="begin()">Beginning</button>
+            <button type="button" class="btn log12" style="display:inline-block; margin-right:3vw;" onclick="month()">Month</button>
+            <button type="button" class="btn log13" style="display:inline-block; margin-right:3vw;" onclick="week()">Week</button>
+            <button type="button" class="btn log" style="float:right; display:inline-block;" onclick="change()">Logarithmic</button>
+        </div>
+    </div>
+    <div class="container" style="margin-top:5vw;">
+        <div class="chart-container" style="position:relative; height:20vh; width:60vw; margin-left:15vw; margin-top:10vh;">
+            <h3 class="st">Daily New Cases</h3>
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+    <div class="container" style="margin-top:25vw;">
+        <div class="chart-container" style="position:relative; height:20vh; width:60vw; margin-left:15vw; margin-top:10vh;">
+            <h3 class="st">Daily Recoveries</h3>
+            <canvas id="myChart1"></canvas>
+        </div>
+    </div>
+    <div class="container" style="margin-top:25vw;">
+        <div class="chart-container" style="position:relative; height:20vh; width:60vw; margin-left:15vw; margin-top:10vh;">
+            <h3 class="st">Daily Deaths</h3>
+            <canvas id="myChart2"></canvas>
+        </div>
+    </div>
+    <div class="container" style="margin-top:25vw;">
+        <div class="chart-container" style="position:relative; height:20vh; width:60vw; margin-left:15vw; margin-top:10vh;" >
+            <h3 id="st_test" class="st"></h3>
+            <canvas id="myChart3"></canvas>
+        </div>
+    </div>
+    <div id="district_table" class="container" style="display:none; margin-top:25vw; margin-bottom: 25px;" data-page-length='32'>
+        <h3 id="st_test1" class="st" style="margin-left: 15vw;"></h3>
+        <table id="example1" class="" style="width:70%; margin-top:10px" >
+            <thead id="#thead1" style="color:#928f8f;">
+            <th>District</th>
+            <th>Confirmed</th>
+            <th>Active</th>
+            <th>Recovered</th>
+            <th>Deceased</th>
+            </thead>
+            <tbody id="main1">
+                <tr ng-repeat="x in result1">
+                    <td id="state1">{{ x.city }}</td>
+                    <td id="confirm1">{{ x.confirmed_case }} <span style="font-size:0.8em; color:red;" ng-if="x.del_con != 0"><i class='fas fa-arrow-up' style='font-size:16px'></i>{{ x.del_con }}</span></td>
+                    <td id="active1">{{ x.active_case }}</td>
+                    <td id="recovered1">{{ x.recovered_case }} <span style="font-size:0.8em; color:#28a745;" ng-if="x.del_rec != 0"><i class='fas fa-arrow-up' style='font-size:16px; color:#28a745;'></i>{{ x.del_rec }}</span></td>
+                    <td id="death1">{{ x.deceased_case }} <span style="font-size:0.8em; color:gray;" ng-if="x.del_dec != 0"><i class='fas fa-arrow-up' style='font-size:16px; color:gray;'></i> {{ x.del_dec }}</span> </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+<script>
+      var app = angular.module('myApp', []);
+
+      var stat="";
+      var bstat="";
+      var table1;
+      var table2;
+      var type="";
+      var dur="";
+
+      $.ajaxSetup({
+          async: false
+      });
+
+      $(document).ready(function () {
+          table1 = $('#example').DataTable({
+            "autoWidth": false,
+            "bInfo" : false,
+            "paging": false,
+            "order": [[ 2, "desc" ]],
+            "rowCallback": function( row, data, index ) {
+              if(index%2 == 0){
+                  $(row).css({'background':'black','color':'white'});
+              }else{
+                  $(row).css({'background':'#2b2a2a','color':'white'});
+              }
+            } 
+            
+          });
+          
+      });
+
+      app.controller('myCtrl', function($rootScope) {
+              $rootScope.result = ar;
+              $rootScope.total= total;
+              $rootScope.time_con = time_con;
+              $rootScope.time_dec= time_dec;
+              $rootScope.time_rec = time_rec;
+          $rootScope.result1 = state;
+          });
+      
+      $(".st").css('color', 'white');
+      $('.log11').addClass("click1");
+      $('.log12').removeClass("click1");
+      $('.log13').removeClass("click1");
+
+      function change() { 
+          if(type==''){
+            type = 'logarithmic'; 
+            $('.log').addClass("click");
+          }
+          else{
+            type = ''; 
+            $('.log').removeClass("click");
+          }
+
+          ctx = document.getElementById('myChart').getContext('2d');
+          myLineChart.destroy();
+          myLineChart = custom_graph(ctx,date,'no of cases',con_tt,'rgba(255, 99, 132, 0.2)','rgba(255, 99, 132, 1)',type,dur)
+
+          ctx1 = document.getElementById('myChart1').getContext('2d');
+          myLineChart1.destroy();
+          myLineChart1 = custom_graph(ctx1,date,'no of recoveries',rec_tt,'rgba(95, 237, 133, 0.2)','rgba(35, 166, 23, 1)',type,dur)
+
+          ctx2 = document.getElementById('myChart2').getContext('2d');
+          myLineChart2.destroy();
+          myLineChart2 = custom_graph(ctx2,date,'no of deaths',dec_tt,'rgba(191, 191, 191, 0.3)','rgba(255,255,255, 1)',type,dur)
+
+          
+          myLineChart3.destroy();
+          if(stat!=""){
+            myLineChart3 = custom_graph(ctx3,dateee,'no of tests in '+stat ,testt,'rgba(90, 143, 250, 0.3)','rgba(4, 72, 209, 1)',type,dur)
+          }
+          else{
+            myLineChart3 = custom_graph(ctx3,dateee,'no of tests in India' ,testt,'rgba(90, 143, 250, 0.3)','rgba(4, 72, 209, 1)',type,dur)
+          }
+            
+      } 
+
+      function begin(){
+        if(dur!=""){
+            dur="";
+              
+            $('.log11').addClass("click1");
+            $('.log12').removeClass("click1");
+            $('.log13').removeClass("click1");
+          
+            ctx = document.getElementById('myChart').getContext('2d');
+            myLineChart.destroy();
+            myLineChart = custom_graph(ctx,date,'no of cases',con_tt,'rgba(255, 99, 132, 0.2)','rgba(255, 99, 132, 1)',type,dur)
+
+            ctx1 = document.getElementById('myChart1').getContext('2d');
+            myLineChart1.destroy();
+            myLineChart1 = custom_graph(ctx1,date,'no of recoveries',rec_tt,'rgba(95, 237, 133, 0.2)','rgba(35, 166, 23, 1)',type,dur)
+
+            ctx2 = document.getElementById('myChart2').getContext('2d');
+            myLineChart2.destroy();
+            myLineChart2 = custom_graph(ctx2,date,'no of deaths',dec_tt,'rgba(191, 191, 191, 0.3)','rgba(255,255,255, 1)',type,dur)
+
+            
+            myLineChart3.destroy();
+            if(stat!=""){
+              myLineChart3 = custom_graph(ctx3,dateee,'no of tests in '+stat ,testt,'rgba(90, 143, 250, 0.3)','rgba(4, 72, 209, 1)',type,dur)
+            }
+            else{
+              myLineChart3 = custom_graph(ctx3,dateee,'no of tests in India' ,testt,'rgba(90, 143, 250, 0.3)','rgba(4, 72, 209, 1)',type,dur)
+            }
+          }
+      }
+
+      function month(){
+        if(dur!="month"){
+          dur="month";
+          $('.log11').removeClass("click1");
+          $('.log12').addClass("click1");
+          $('.log13').removeClass("click1");
+
+          ctx = document.getElementById('myChart').getContext('2d');
+          myLineChart.destroy();
+          myLineChart = custom_graph(ctx,date,'no of cases',con_tt,'rgba(255, 99, 132, 0.2)','rgba(255, 99, 132, 1)',type,dur)
+
+          ctx1 = document.getElementById('myChart1').getContext('2d');
+          myLineChart1.destroy();
+          myLineChart1 = custom_graph(ctx1,date,'no of recoveries',rec_tt,'rgba(95, 237, 133, 0.2)','rgba(35, 166, 23, 1)',type,dur)
+
+          ctx2 = document.getElementById('myChart2').getContext('2d');
+          myLineChart2.destroy();
+          myLineChart2 = custom_graph(ctx2,date,'no of deaths',dec_tt,'rgba(191, 191, 191, 0.3)','rgba(255,255,255, 1)',type,dur)
+
+          
+          myLineChart3.destroy();
+          if(stat!=""){
+            myLineChart3 = custom_graph(ctx3,dateee,'no of tests in '+stat ,testt,'rgba(90, 143, 250, 0.3)','rgba(4, 72, 209, 1)',type,dur)
+          }
+          else{
+            myLineChart3 = custom_graph(ctx3,dateee,'no of tests in India' ,testt,'rgba(90, 143, 250, 0.3)','rgba(4, 72, 209, 1)',type,dur)
+          }
+        }
+      }
+
+      function week(){
+        if(dur!="week"){
+          dur="week";
+          $('.log11').removeClass("click1");
+          $('.log12').removeClass("click1");
+          $('.log13').addClass("click1");
+
+          ctx = document.getElementById('myChart').getContext('2d');
+          myLineChart.destroy();
+          myLineChart = custom_graph(ctx,date,'no of cases',con_tt,'rgba(255, 99, 132, 0.2)','rgba(255, 99, 132, 1)',type,dur)
+
+          ctx1 = document.getElementById('myChart1').getContext('2d');
+          myLineChart1.destroy();
+          myLineChart1 = custom_graph(ctx1,date,'no of recoveries',rec_tt,'rgba(95, 237, 133, 0.2)','rgba(35, 166, 23, 1)',type,dur)
+
+          ctx2 = document.getElementById('myChart2').getContext('2d');
+          myLineChart2.destroy();
+          myLineChart2 = custom_graph(ctx2,date,'no of deaths',dec_tt,'rgba(191, 191, 191, 0.3)','rgba(255,255,255, 1)',type,dur)
+
+          
+          myLineChart3.destroy();
+          if(stat!=""){
+            myLineChart3 = custom_graph(ctx3,dateee,'no of tests in '+stat ,testt,'rgba(90, 143, 250, 0.3)','rgba(4, 72, 209, 1)',type,dur)
+          }
+          else{
+            myLineChart3 = custom_graph(ctx3,dateee,'no of tests in India' ,testt,'rgba(90, 143, 250, 0.3)','rgba(4, 72, 209, 1)',type,dur)
+          }
+        }
+      }
+
+      let time_con=[];
+      let time_dec=[];
+      let time_rec=[];
+      let time=[];
+
+      let date=[];
+      let con_tt=[];
+      let rec_tt=[];
+      let dec_tt=[];
+
+      $.getJSON("https://api.covid19india.org/states_daily.json", function(res){
+          time=res;
+
+        $.each(res["states_daily"], function(index,item) {
+          let tp={};
+          let tt=0;
+
+          if(item["status"]=="Confirmed"){
+
+            tt+=item["tt"];
+
+            tp={
+              date:item["date"],
+              total:tt
+            };
+
+            date.push(item["date"]);
+            con_tt.push(tt);
+
+            time_con.push(tp);
+
+          }
+          else if(item["status"]=="Recovered"){
+
+            tt+=item["tt"];
+
+            tp={
+              date:item["date"],
+              total:tt
+            };
+            rec_tt.push(tt);
+
+            time_rec.push(tp);
+          }
+          else if(item["status"]=="Deceased"){
+
+            tt+=item["tt"];
+
+            tp={
+              date:item["date"],
+              total:tt
+            };
+
+            dec_tt.push(tt);
+
+            time_dec.push(tp);
+          }
+
+        });
+      });
+
+    var ar = [];
+    var state = [];
+
+      var total={};
+
+      $.getJSON("https://api.covid19india.org/state_district_wise.json", function(result){
+          let tot_rec=0;
+          let tot_con=0;
+          let tot_dec=0;
+          let tot_del_con=0;
+          let tot_del_rec=0;
+          let tot_del_dec=0;
+
+          $.each(result, function(index,item) {
+
+            let active=0;
+            let confirmed=0;
+            let death=0;
+            let recovered=0;
+            let state="";
+            let del_con=0;
+            let del_rec=0;
+            let del_dec=0;
+
+
+            $.each(item["districtData"], function(index1,item1) {
+                del_con+=item1["delta"]["confirmed"];
+                del_rec+=item1["delta"]["recovered"];
+                del_dec+=item1["delta"]["deceased"];
+                active+=item1["active"];
+                confirmed+=item1["confirmed"];
+                death+=item1["deceased"];
+                recovered+=item1["recovered"];
+            });
+
+            tot_con+=confirmed;
+            tot_rec+=recovered;
+            tot_dec+=death;
+
+            var dict = {
+                state:index,
+                active:active,
+                confirmed:confirmed,
+                deceased:death,
+                recovered:recovered,
+                del_con:del_con,
+                del_rec:del_rec,
+                del_dec:del_dec
+            };
+
+            tot_del_con+=del_con;
+            tot_del_rec+=del_rec;
+            tot_del_dec+=del_dec;
+
+            ar.push(dict);
+
+          });
+
+          total={
+            tot_con:tot_con,
+            tot_dec:tot_dec,
+            tot_rec:tot_rec,
+            tot_act:tot_con-tot_rec-tot_dec,
+            tot_del_con:tot_del_con,
+            tot_del_rec:tot_del_rec,
+            tot_del_dec:tot_del_dec
+          };
+
+      });
+
+      var dateee=[];
+      var testt=[];
+
+          function custom_graph(ctx,lab,sent,dataa,background,border,typ,dur){
+
+                if(dur=="week"){
+                  // for day
+                  lab=lab.slice(Math.max(lab.length - 8, 1))
+                  dataa=dataa.slice(Math.max(dataa.length - 8, 1))
+                  $('.log1').addClass("click1")
+                }
+                else if(dur=="month"){
+                  // for month
+                  lab=lab.slice(Math.max(lab.length - 31, 1))
+                  dataa=dataa.slice(Math.max(dataa.length - 31, 1))
+                  $('.log1').addClass("click1")
+                }
+                else{
+                  $('.log1').addClass("click1")
+                  // for beginning
+                  // alert(Math.max(dataa.length - 2, 1))
+                  // lab=lab.slice(Math.max(lab.length - 2, 1))
+                  // dataa=dataa.slice(Math.max(dataa.length - 2, 1))
+                }
+
+                if(typ!=""){
+                  return new Chart(ctx, {
+                      type: 'line',
+                      data: {
+                              labels: lab,
+                              datasets: [{
+                                  label: sent,
+                                  data: dataa,
+                                  backgroundColor: [
+                                      background
+                                  ],
+                                  borderColor: [
+                                      border
+                                  ],
+                                  borderWidth: 1
+                              }]
+                          },
+                      options: {
+                            scales: {
+
+                              xAxes: [{
+                                      gridLines: {
+                                          color: "rgba(0, 0, 0, 0)",
+                                      }
+                                  }],
+                                  yAxes: [{
+                                      type: typ,
+                                      gridLines: {
+                                          color: "rgba(0, 0, 0, 0)",
+                                      },
+                                      ticks: {
+                                          // beginAtZero: true,
+                                          min: 0,
+                                          max: 10000000,
+                                          callback: function (value, index, values) {
+                                              if (value === 100000000) return "8";
+                                              if (value === 10000000) return "7";
+                                              if (value === 1000000) return "6";
+                                              if (value === 100000) return "5";
+                                              if (value === 10000) return "4";
+                                              if (value === 1000) return "3";
+                                              if (value === 100) return "2";
+                                              if (value === 10) return "1";
+                                              if (value === 0) return "0";
+                                              return null;
+                                          }
+                                      }
+                                  }]
+                          }
+                        }
+                      });
+                }
+                else{
+                  return new Chart(ctx, {
+                      type: 'line',
+                      data: {
+                              labels: lab,
+                              datasets: [{
+                                  label: sent,
+                                  data: dataa,
+                                  backgroundColor: [
+                                      background
+                                  ],
+                                  borderColor: [
+                                      border
+                                  ],
+                                  borderWidth: 1
+                              }]
+                          },
+                      options: {
+                            scales: {
+
+                              xAxes: [{
+                                      gridLines: {
+                                          color: "rgba(0, 0, 0, 0)",
+                                      }
+                                  }],
+                                  yAxes: [{
+                                      gridLines: {
+                                          color: "rgba(0, 0, 0, 0)",
+                                      },
+                                      ticks: {
+                                          beginAtZero: true
+                                      }
+                                  }]
+                          }
+                        }
+                      });
+                }
+            }
+
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myLineChart = custom_graph(ctx,date,'no of cases',con_tt,'rgba(255, 99, 132, 0.2)','rgba(255, 99, 132, 1)',type,dur)
+
+            var ctx1 = document.getElementById('myChart1').getContext('2d');
+            var myLineChart1 = custom_graph(ctx1,date,'no of recoveries',rec_tt,'rgba(95, 237, 133, 0.2)','rgba(35, 166, 23, 1)',type,dur)
+
+            var ctx2 = document.getElementById('myChart2').getContext('2d');
+            var myLineChart2 = custom_graph(ctx2,date,'no of deaths',dec_tt,'rgba(191, 191, 191, 0.3)','rgba(255,255,255, 1)',type,dur)
+
+            
+
+            var tot_test=0;
+            var dict1 = []; // create an empty array
+            
+
+            $.getJSON("https://api.covid19india.org/state_test_data.json", function(result){
+
+                $.each(result, function(index,item){
+                    $.each(item, function(index1,item1){
+                          dict1.push({
+                              state:item1["state"],
+                              tested: item1["totaltested"],
+                              date: item1["updatedon"]
+                          });
+                    });
+                });
+
+            });
+            //let datee=new Array();
+            testt=new Array();
+            let myMap = new Map();
+        
+            var ctx3 = document.getElementById('myChart3').getContext('2d');
+            var myLineChart3;
+            var dict2=[]
+
+            $(document).ready(function () {
+                $.each(dict1, function(index,item){
+                  
+                    if(myMap.has(item["date"])){
+                      if(item["tested"]!=0){
+                        myMap.set(item["date"],parseInt(myMap.get(item["date"]))+parseInt(item["tested"]));
+                      }
+                    }
+                    else{
+                      if(item["tested"]!=0){
+                        myMap.set(item["date"],parseInt(item["tested"]));
+                      }
+                      else{
+                        myMap.set(item["date"],0);
+                      }
+                    }
+                    
+                });
+                
+                var tp={}
+                let baap=[]
+                dateee=[];
+                testt=[];
+
+                for (let [k, v] of myMap) {
+
+                    tp={
+                      'date':k,
+                      'tests':v
+                    }
+                    baap.push(tp);
+                }
+
+                baap.sort(function(a, b) {
+                  var aComps = a.date.split("/");
+                  var bComps = b.date.split("/");
+                  var aDate = new Date(aComps[2], aComps[1], aComps[0]);
+                  var bDate = new Date(bComps[2], bComps[1], bComps[0]);
+                  return aDate.getTime() - bDate.getTime();
+                });
+
+
+                $.each(baap, function(index,item){
+                  dateee.push(item['date']);
+                  testt.push(item['tests'])
+                });
+
+                $("#st_test").text("India's Total Tests");
+                myLineChart3 = custom_graph(ctx3,dateee,'no of tests in India' ,testt,'rgba(90, 143, 250, 0.3)','rgba(4, 72, 209, 1)',type,dur)
+
+                $("tr > #state").click(function () {
+                    $('#example1').dataTable().fnDestroy();
+
+                  dateee=new Array();
+                    testt = new Array();
+
+                  location.href = "#myChart3";
+                  bstat=stat;
+                  stat=$(this).text();
+                  $.each(dict1, function(index,item){
+
+                    if(item["state"]==stat){
+                      dateee.push(item["date"]);
+                      testt.push(item["tested"]);
+                    }
+
+                  });
+                  
+                  $("#st_test").text(stat+ " Total Tests");
+                  if(bstat!=""){
+                    myLineChart3.destroy();
+                  }
+
+                  myLineChart3 = custom_graph(ctx3,dateee,'no of tests in '+stat ,testt,'rgba(90, 143, 250, 0.3)','rgba(4, 72, 209, 1)',type,dur)
+                    
+                    $("#st_test1").text(stat + " Cases (District wise)");
+                    $("#district_table").show();
+                   $.getJSON("https://api.covid19india.org/state_district_wise.json", function(result){
+                   state = []
+                       console.log("YEs");
+                   $.each(result, function(index,item) {
+                     if(index==stat){
+                      
+                       $.each(item["districtData"], function(index1,item1) {
+                         tp={
+                           city:index1,
+                           active_case:item1["active"],
+                           confirmed_case:item1["confirmed"],
+                           recovered_case:item1["recovered"],
+                           deceased_case:item1["recovered"],
+                           del_con:item1["delta"]["confirmed"],
+                           del_rec:item1["delta"]["recovered"],
+                           del_dec:item1["delta"]["deceased"]
+                         };
+                         state.push(tp);
+                       });
+                     }
+                   });
+                       
+                       var elem = angular.element(document.querySelector('[ng-app]'));
+                       var injector = elem.injector();
+                       var $rootScope = injector.get('$rootScope');
+                       $rootScope.$apply(function () {
+                           $rootScope.result1 = state;
+                       });
+                       table2 = $('#example1').DataTable({
+                           "autoWidth": false,
+                           "bInfo": false,
+                           "paging": false,
+                           "order": [[0, "asc"]],
+                           "rowCallback": function (row, data, index) {
+                               if (index % 2 == 0) {
+                                   $(row).css({ 'background': 'black', 'color': 'white' });
+                               } else {
+                                   $(row).css({ 'background': '#2b2a2a', 'color': 'white' });
+                               }
+                           }
+
+                       });
+                       
+                   });
+                    
+                });
+
+              });
+
+</script>
+</html>

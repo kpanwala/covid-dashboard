@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+        <style>
+        .dataTables_filter {
+        display: none;
+        }
+        body{
+            background:black;
+        }
+        #loginbtn{
+    background-color: lightblue;
+    margin-top: -10px;
+    margin-right: 50px;
+    border: 1px solid blue;
+    width: 70px;
+    height: 40px;
+    font-weight: 600;
+    }
+
+        </style>
+    </head>
+<body ng-app="myApp" ng-controller="myCtrl">
+    <input type=button onClick="location.href='home.html'" value='Home' id = "loginbtn" style="float: right">
+    <h1 style="color: red; text-align: center; font-size:50px;"><b>COVID-19 HELPLINE</b></h1>
+    <div class="container" style="display:block; margin-top:10vh;" data-page-length='32'>
+        <table id="example" class="" style="width:70%;">
+            <thead id="#thead" style="color:#928f8f;">
+            <th>State/Union-Territory</th>
+            <th>Contact Number</th>
+            </thead>
+            <tbody id="main">
+                <tr ng-repeat="x in result">
+                    <td id="state">{{ x.state }}</td>
+                    <td id="number">{{ x.number }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+<script>
+    var app = angular.module('myApp', []);
+    $.ajaxSetup({
+          async: false
+    });
+    
+    var table;
+    $(document).ready(function () {
+          table = $('#example').DataTable({
+            "autoWidth": false,
+            "bInfo" : false,
+            "paging": false,
+            "order": [[ 0, "asc" ]],
+            'columnDefs': [ {
+        'targets': [1],
+        'orderable': false, // set orderable false for selected columns
+     }],
+            "rowCallback": function( row, data, index ) {
+              if(index%2 == 0){
+                  $(row).css({'background':'black','color':'white'});
+              }else{
+                  $(row).css({'background':'#2b2a2a','color':'white'});
+              }
+            } 
+          });
+      });
+      app.controller('myCtrl', function($rootScope) {
+              $rootScope.result = ar;
+    });
+      var ar = [];
+      $.getJSON("https://api.rootnet.in/covid19-in/contacts", function(result){
+        $.each(result, function(index,item) {
+                     if(index=="data"){   
+                       $.each(item, function(index1,item1) {
+                        if(index1="contacts"){
+                            $.each(item1, function(index2,item2){
+                                if(index1="regional"){
+                                    $.each(item1["regional"], function(index3,item3){
+                                    var dict={
+                                        state:item3["loc"],
+                                        number:item3["number"]
+                                    };
+                                    ar.push(dict);
+                            });
+                            }
+                        });
+                        }
+                            });
+                        }
+                       });
+                     });
+           console.log(ar);         
+
+</script>      
+</html>

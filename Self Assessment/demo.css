@@ -1,0 +1,77 @@
+* {
+	font-family: 'Roboto', sans-serif;
+}
+html, body {
+	font-size: 16px;
+}
+
+section#demo {
+	background: #0e0c0c;
+	position: relative;
+	padding: 0;
+	min-height: 100vh;
+	transition: height 9999s;
+	color: #004466;
+}
+.vertical-align {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	left: 0;
+	width: 100%;
+}
+.card {
+	background: blue;
+    box-shadow: 13px 13px 28px 2px rgba(0, 0, 0, 0.035);
+    padding: 7px 15px;
+}
+.overlay {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(0, 0, 0, 0.7);
+    }
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+}
+.popup {
+	margin: 70px auto;
+	padding: 20px;
+	background: #fff;
+	border-radius: 5px;
+	width: 30%;
+	position: relative;
+}
+
+.popup h2 {
+	margin-top: 0;
+	color: #333;
+	font-family: Tahoma, Arial, sans-serif;
+}
+
+.popup .content {
+	max-height: 30%;
+	overflow: auto;
+}
+#mybtn {
+	margin-top:35px;
+	margin-left:80px;
+	transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	background-color: black;
+	color:white;
+	font-size: 16px;
+	padding: 12px 20px;
+	border: none;
+	cursor: pointer;
+	border-radius: 15px;
+	text-align: center;
+  }
+  
+  #mybtn:hover {
+	background-color: #f1f1f1;
+	color:black;
+  }
