@@ -404,9 +404,13 @@
             "paging": false,
             "order": [[ 2, "desc" ]],
             "rowCallback": function( row, data, index ) {
-              if(index%2 == 0){
-                  $(row).css({'background':'black','color':'white'});
-              }else{
+              if(index == 0){
+                  $(row).css({'background':'#ff9999','color':'white'});
+              }
+              else if(index%2==0){
+                $(row).css({'background':'black','color':'white'});
+              }
+              else{
                   $(row).css({'background':'#2b2a2a','color':'white'});
               }
             } 
@@ -899,7 +903,7 @@
                   dateee=new Array();
                     testt = new Array();
 
-                  location.href = "#myChart3";
+                  location.href = "#st_test1";
                   bstat=stat;
                   stat=$(this).text();
                   $.each(dict1, function(index,item){
@@ -952,13 +956,18 @@
                            "autoWidth": false,
                            "bInfo": false,
                            "paging": false,
-                           "order": [[0, "asc"]],
+                           "order": [[2, "desc"]],
                            "rowCallback": function (row, data, index) {
-                               if (index % 2 == 0) {
-                                   $(row).css({ 'background': 'black', 'color': 'white' });
-                               } else {
-                                   $(row).css({ 'background': '#2b2a2a', 'color': 'white' });
-                               }
+                            if(index == 0){
+                  $(row).css({'background':'#ff9999','color':'white'});
+              }
+              else if(index%2==0){
+                $(row).css({'background':'black','color':'white'});
+              }
+              else{
+                  $(row).css({'background':'#2b2a2a','color':'white'});
+              }
+
                            }
 
                        });
