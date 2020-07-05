@@ -14,9 +14,24 @@
         body{
             background:black;
         }
+        #loginbtn{
+            background:rgb(245, 49, 213, 0.6);
+            border-style: solid;
+            border-color:rgb(245, 122, 225);
+            color:white;
+            margin-top: -10px;
+            margin-right: 50px;
+            width: 70px;
+            height: 40px;
+            font-weight: 600;
+            cursor:pointer;
+        }
+
         </style>
     </head>
 <body ng-app="myApp" ng-controller="myCtrl">
+    <input type=button onClick="location.href='user-display.php'" value='Home' id = "loginbtn" style="float: right">
+    <h1 style="color: red; text-align: center; font-size:50px;"><b>COVID-19 HELPLINE</b></h1>
     <div class="container" style="display:block; margin-top:10vh;" data-page-length='32'>
         <table id="example" class="" style="width:70%;">
             <thead id="#thead" style="color:#928f8f;">

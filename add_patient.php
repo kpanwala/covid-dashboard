@@ -1,6 +1,8 @@
 <?php
-// session_start();
-// error_reporting(0);
+session_start();
+if (!isset($_SESSION['login'])) {        //To prevent login using Back button of browser
+    header('location:home.html');  //As session as already been destroyed in logout.php thus it should not be set
+}
 include_once("include/config.php");
 
 if(isset($_POST['submit']))
@@ -28,8 +30,8 @@ if(isset($_POST['submit']))
 $sql=mysqli_query($con,"insert into patient(name,contact,email,gender,age,med_history,symptoms,tra_history,address) values('$patname','$patcontact','$patemail','$gender','$patage','$medhis','$symp','$tra_his','$pataddress')");
 if($sql)
 {
-echo "<script>alert('Patient info added Successfully');</script>";
-header('location:abc1.html');
+echo "Patient info added Successfully";
+header('location:admin-display.html');
 
 }
 else{
@@ -59,7 +61,39 @@ else{
 		<link rel="stylesheet" href="assets/css/themes/theme-1.css" id="skin_color" />
 
 	</head>
+    
+    <style>
+    .log{
+    background:rgb(255, 132, 0, 0.3);
+    border-style: solid;
+    border-color:rgb(255, 132, 0);
+    color:white;
+}
+
+.log:hover{
+    background:rgb(255, 132, 0, 0.6);
+    border-style: solid;
+    border-color:rgb(255, 255, 255);
+    color:white;
+}
+
+        .click{
+    background:rgb(255, 132, 0, 0.6);
+    border-style: solid;
+    border-color:rgb(255, 255, 255);
+    color:white;
+}
+
+    </style>
+    
 	<body style="background-color: black;">
+        <div class="container">
+      <div class="chart-container" style="position:relative; display:inline-block; height:5vh; width:60vw; margin-left:15vw; margin-top:3vh;">
+        <button type="button" class="btn log" onClick="location.href='admin-display.php'" style="float:right; display:inline-block; margin-right:3vw;"  >Home</button> 
+        </div>
+    </div>
+    
+        
 		<div id="app">		
 <div class="app-content" style = "margin-left:350px;">
 						
@@ -89,20 +123,19 @@ else{
 <label for="doctorname">
 Patient Name
 </label>
-<input type="text" name="patname" class="form-control"  placeholder="Enter Patient Name" required="true">
+<input type="text" name="patname" pattern="[a-zA-Z\s]+" class="form-control"  placeholder="Enter Patient Name" required="true">
 </div>
 <div class="form-group">
 <label for="fess">
  Patient Contact no
 </label>
-<input type="text" name="patcontact" class="form-control"  placeholder="Enter Patient Contact no" required="true" maxlength="10" pattern="[0-9]+">
+<input type="text" name="patcontact" class="form-control" pattern="[0-9]{10}" placeholder="Enter Patient Contact no" required="true" >
 </div>
 <div class="form-group">
 <label for="fess">
 Patient Email
 </label>
-<input type="email" id="patemail" name="patemail" class="form-control"  placeholder="Enter Patient Email id" required="true" onBlur="userAvailability()">
-<span id="user-availability-status1" style="font-size:12px;"></span>
+<input type="email" id="patemail" name="patemail" class="form-control" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" placeholder="Enter Patient Email id" required="true" >
 </div>
 <div class="form-group">
 <label class="block">
@@ -129,7 +162,7 @@ Patient Address
 <label for="fess">
  Patient Age
 </label>
-<input type="text" name="patage" class="form-control"  placeholder="Enter Patient Age" required="true">
+<input type="text" name="patage" class="form-control" pattern = "[0-9]{2}" placeholder="Enter Patient Age" required="true">
 </div>
 <div class="form-group">
 <label for="fess">
@@ -137,11 +170,11 @@ Patient Address
 </label>
 <!-- <textarea type="text" name="medhis" class="form-control"  placeholder="Enter Patient Medical History(if any)" required="true"></textarea> -->
 <select name="med_history[]" id="med_history" class="form-control" multiple >
-    <option value="diabetes">Diabetes</option>
-    <option value="heart disease">Heart Disease</option>
-    <option value="lung disease">Lung Disease</option>
-	<option value="hypertension">Hypertension</option>
-	<option value="asthma">Asthma</option>
+    <option value="Diabetes">Diabetes</option>
+    <option value="Heart disease">Heart Disease</option>
+    <option value="Lung disease">Lung Disease</option>
+	<option value="Hypertension">Hypertension</option>
+	<option value="Asthma">Asthma</option>
   </select>
 </div>	
 <div class="form-group">
@@ -150,11 +183,11 @@ Patient Address
 	</label>
 	<!-- <textarea type="text" name="medhis" class="form-control"  placeholder="Enter Patient Medical History(if any)" required="true"></textarea> -->
 	<select name="symp[]" id="symp" class="form-control" multiple>
-		<option value="cough">Cough</option>
-		<option value="fever">Fever</option>
-		<option value="breathlessness">Breathlessness</option>
-		<option value="vomitting">Vomitting</option>
-		<option value="body ache">Body Ache</option>
+		<option value="Cough">Cough</option>
+		<option value="Fever">Fever</option>
+		<option value="Breathlessness">Breathlessness</option>
+		<option value="Vomitting">Vomitting</option>
+		<option value="Body Ache">Body Ache</option>
 	  </select>
 	</div>	
 	

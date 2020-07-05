@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.5
+-- version 5.0.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 22, 2020 at 02:14 PM
--- Server version: 10.1.38-MariaDB
--- PHP Version: 7.3.3
+-- Generation Time: Jul 05, 2020 at 11:24 AM
+-- Server version: 10.4.13-MariaDB
+-- PHP Version: 7.2.31
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -46,8 +45,8 @@ CREATE TABLE `patient` (
 --
 
 INSERT INTO `patient` (`id`, `name`, `contact`, `email`, `gender`, `age`, `med_history`, `symptoms`, `tra_history`, `address`) VALUES
-(1, 'Kalp', 7865476574, 'kpanwala@gmail.com', 'male', 21, 'heart disease, lung disease', 'breathlessness, body ache', 'Wuhan,China\r\nNew York', 'A-503\r\nBhabha Bhawan,SVNIT'),
-(2, 'Kalp', 7865476574, 'kpanwala@gmail.com', 'male', 21, 'diabetes, heart disease', 'fever, body ache', 'Wuhan,China', 'A-503\r\nBhabha Bhawan,SVNIT');
+(1, 'Kalp', 7865476574, 'kpanwala@gmail.com', 'male', 21, 'Heart disease, Lung disease', 'Breathlessness, Body Ache', 'Wuhan,China\r\nNew York', 'A-503\r\nBhabha Bhawan,SVNIT'),
+(2, 'Raghav', 7865476574, 'raghav@gmail.com', 'male', 21, 'Diabetes, Heart disease', 'Fever, Body Ache', 'Wuhan,China', 'A-503\r\nBhabha Bhawan,SVNIT');
 
 -- --------------------------------------------------------
 
@@ -57,9 +56,17 @@ INSERT INTO `patient` (`id`, `name`, `contact`, `email`, `gender`, `age`, `med_h
 
 CREATE TABLE `self_ass` (
   `id` int(11) NOT NULL,
-  `date` date NOT NULL,
+  `date` date NOT NULL DEFAULT current_timestamp(),
   `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `self_ass`
+--
+
+INSERT INTO `self_ass` (`id`, `date`, `status`) VALUES
+(4, '2020-07-05', 'Safe'),
+(5, '2020-06-26', 'Safe');
 
 -- --------------------------------------------------------
 
@@ -82,7 +89,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `address`, `city`, `gender`, `email`, `password`) VALUES
-(1, 'Raghav Laddha', 'A-503', 'Surat', 'male', 'raghavladdha1906@gmail.com', '18deb50ed02ad7260499409460291199');
+(4, 'Ashish Bhatia', 'A804', 'Surat', 'male', 'ashish@gmail.com', 'bd50cf1839f726383bc657ebc80ba95c'),
+(5, 'Raghav Laddha', 'A503', 'Surat', 'male', 'raghav@gmail.com', '37e84239b42ee02a53c6fb6a01fca2b3'),
+(6, 'Kalp Panwala', 'A402', 'Surat', 'male', 'kalp@gmail.com', '0a282377cd8978940283d86f79d34151');
 
 --
 -- Indexes for dumped tables
@@ -120,7 +129,7 @@ ALTER TABLE `patient`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,3 +1,9 @@
+<?php
+session_start();
+if (!isset($_SESSION['login'])) {        //To prevent login using Back button of browser
+    header('location:home.html');  //As session as already been destroyed in logout.php thus it should not be set
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,7 +13,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <script src='https://kit.fontawesome.com/a076d05399.js'></script>
-
+  <link href="css/style.css" rel="stylesheet" type="text/css"  media="all" />
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
   <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
@@ -15,12 +21,11 @@
   <script src="http://momentjs.com/downloads/moment.js"></script>
 </head>
 <style>
-  
   body{
     background:black;
   }
-  /* start of loader css */
-  .loading{
+    /* start of loader css */
+    .loading{
      width:100px;
      height:100px;
      margin:30px auto;
@@ -197,31 +202,17 @@
     color:white;
 }
 
-.log11{
+.log11,.log12,.log13{
     background:rgb(245, 49, 213, 0.3);
     border-style: solid;
     border-color:rgb(245, 122, 225);
     color:white;
 }
 
-.log11:hover{
+.log11:hover,.log12:hover,.log13:hover{
     background:rgb(245, 49, 213, 0.6);
     border-style: solid;
     border-color:rgb(245, 122, 225);
-    color:white;
-}
-
-.clr{
-    background:rgba(82, 209, 248, 0.6);
-    border-style: solid;
-    border-color:rgb(17, 47, 180);
-    color:white;
-}
-
-.clr:hover{
-    background:rgba(2, 69, 107, 0.6);
-    border-style: solid;
-    border-color:rgb(255, 255, 255);
     color:white;
 }
 
@@ -231,154 +222,154 @@
     border-color:rgb(245, 122, 225);
     color:white;
 }
-
-#loginbtn{
-    background-color: lightblue;
-    margin-top: -10px;
-    margin-right: 50px;
-    border: 1px solid blue;
-    width: 70px;
-    height: 40px;
-    font-weight: 600;
-}
     
 </style>
-
 <body ng-app="myApp" ng-controller="myCtrl">
-  
-    <!-- loader -->
-    <div class="loading bar">
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
-
-    <div class="mudda" style="display:none;">
-      <div class="container">
-        <div class="chart-container" style="position:relative; display:inline-block; height:5vh; width:60vw; margin-left:15vw; margin-top:1vh;">
-          <button type="button" class="btn clr" onClick="location.href='login_page.html'" style="float:right; display:inline-block; margin-right:3vw;"  >Login</button> 
-          <button type="button" class="btn log11" style="float:right; display:inline-block; margin-right:3vw;"  >Home</button> 
-        </div>
-      </div>
-      <!-- <input type=button onClick="location.href='login_page.html'" value='Login' id = "loginbtn" style="float: right"> -->
-      <div class="container">
-          <div class="row">
-              <div class="col-sm-3">
-                  <h4 style="color:#e83a9a;">Total Cases</h4>
-              </div>
-              <div class="col-sm-3">
-                  <h4 style="color:#1165d4;">Active Cases</h4>
-              </div>
-              <div class="col-sm-3">
-                  <h4 style="color:#08ad05;">Recoveries</h4>
-              </div>
-              <div class="col-sm-3">
-                  <h4 style="color:#d40b0b;">Deaths</h4>
-              </div>
-
-          </div>
-          <div class="row">
-              <div class="col-sm-3 conf">
-                  <img src="virus.svg" width="40vh;"></img>
-                  <span style="color:#e83a9a; font-size:1.3em;">{{ total.tot_con }}</span>&nbsp;
-                  <span style="font-size:0.8em; color:red;" ng-if="total.tot_del_con != 0">{{ total.tot_del_con }}<i class='fas fa-arrow-up' style='font-size:16px'></i></span>
-              </div>
-              <div class="col-sm-3 act">
-                  <img src="virus1.svg" width="40vh;"></img>
-                  <span style="color:#1165d4; font-size:1.3em;">{{ total.tot_act }}</span>&nbsp;
-                  <span style="font-size:0.8em; color:blue;">{{ total.tot_del_con-total.tot_del_dec-total.tot_del_rec }}<i class='fas fa-arrow-up' style='color:blue; font-size:16px'></i></span>
-              </div>
-              <div class="col-sm-3 rec">
-                  <img src="recovered.svg" width="40vh;"></img>
-                  <span style="color:#08ad05; font-size:1.3em;">{{ total.tot_rec }}</span>&nbsp;
-                  <span style="font-size:0.8em; color:green;" ng-if="total.tot_del_rec != 0">{{ total.tot_del_rec }}<i class='fas fa-arrow-up' style='color:green; font-size:16px'></i></span>
-              </div>
-              <div class="col-sm-3 dec">
-                  <img src="coffin.svg" width="40vh;"></img>
-                  <span style="color:#d40b0b; font-size:1.3em;">{{ total.tot_dec   }}</span>&nbsp;
-                  <span style="font-size:0.8em; color:red;" ng-if="total.tot_del_dec != 0">{{ total.tot_del_dec }}<i class='fas fa-arrow-up' style='color:red; font-size:16px'></i></span>
-              </div>
-          </div>
-      </div>
-      <div class="container" style="display:block; margin-top:10vh; margin-bottom:10vw;" data-page-length='32'>
-          <table id="example" class="" style="width:70%;">
-              <thead id="#thead" style="color:#928f8f;">
-              <th>State/Union-Territory</th>
-              <th>Confirmed</th>
-              <th>Active</th>
-              <th>Recovered</th>
-              <th>Deceased</th>
-              </thead>
-              <tbody id="main">
-                  <tr ng-repeat="x in result">
-                      <td id="state">{{ x.state }}</td>
-                      <td id="confirm">{{ x.confirmed }} <span style="font-size:0.8em; color:red;" ng-if="x.del_con != 0"><i class='fas fa-arrow-up' style='font-size:16px'></i>{{ x.del_con }}</span></td>
-                      <td id="active">{{ x.active }}</td>
-                      <td id="recovered">{{ x.recovered }} <span style="font-size:0.8em; color:#28a745;" ng-if="x.del_rec != 0"><i class='fas fa-arrow-up' style='font-size:16px; color:#28a745;'></i>{{ x.del_rec }}</span></td>
-                      <td id="death">{{ x.deceased }} <span style="font-size:0.8em; color:gray;" ng-if="x.del_dec != 0"><i class='fas fa-arrow-up' style='font-size:16px; color:gray;'></i> {{ x.del_dec }}</span> </td>
-                  </tr>
-              </tbody>
-          </table>
-      </div>
-      <div class="container" style="margin-top:5vw; display:none;">
-          <div class="chart-container" style="position:relative; display:inline-block; height:5vh; width:60vw; margin-left:15vw; margin-top:10vh;">
-              <button type="button" class="btn log11" style="float:left; display:inline-block; margin-right:3vw;" onclick="begin()">Beginning</button>
-              <button type="button" class="btn log12" style="display:inline-block; margin-right:3vw;" onclick="month()">Month</button>
-              <button type="button" class="btn log13" style="display:inline-block; margin-right:3vw;" onclick="week()">Week</button>
-              <button type="button" class="btn log" style="float:right; display:inline-block;" onclick="change()">Logarithmic</button>
-          </div>
-      </div>
-      <div class="container" style="margin-top:5vw; display:none;">
-          <div class="chart-container" style="position:relative; height:20vh; width:60vw; margin-left:15vw; margin-top:10vh;">
-              <h3 class="st">Daily New Cases</h3>
-              <canvas id="myChart"></canvas>
-          </div>
-      </div>
-      <div class="container" style="margin-top:25vw; display:none;">
-          <div class="chart-container" style="position:relative; height:20vh; width:60vw; margin-left:15vw; margin-top:10vh;">
-              <h3 class="st">Daily Recoveries</h3>
-              <canvas id="myChart1"></canvas>
-          </div>
-      </div>
-      <div class="container" style="margin-top:25vw; display:none;">
-          <div class="chart-container" style="position:relative; height:20vh; width:60vw; margin-left:15vw; margin-top:10vh;">
-              <h3 class="st">Daily Deaths</h3>
-              <canvas id="myChart2"></canvas>
-          </div>
-      </div>
-      <div class="container" style="margin-top:25vw; display:none;">
-          <div class="chart-container" style="position:relative; height:20vh; width:60vw; margin-left:15vw; margin-top:10vh;" >
-              <h3 id="st_test" class="st"></h3>
-              <canvas id="myChart3"></canvas>
-          </div>
-      </div>
-        <div id="district_table" class="container" style="display:none; margin-top:10vw; margin-bottom: 25px;" data-page-length='32'>
-          <h3 id="st_test1" class="st" style="margin-left: 15vw;"></h3>
-          <table id="example1" class="" style="width:70%; margin-top:10px" >
-              <thead id="#thead1" style="color:#928f8f;">
-              <th>District</th>
-              <th>Confirmed</th>
-              <th>Active</th>
-              <th>Recovered</th>
-              <th>Deceased</th>
-              </thead>
-              <tbody id="main1">
-                  <tr ng-repeat="x in result1">
-                      <td id="state1">{{ x.city }}</td>
-                      <td id="confirm1">{{ x.confirmed_case }} <span style="font-size:0.8em; color:red;" ng-if="x.del_con != 0"><i class='fas fa-arrow-up' style='font-size:16px'></i>{{ x.del_con }}</span></td>
-                      <td id="active1">{{ x.active_case }}</td>
-                      <td id="recovered1">{{ x.recovered_case }} <span style="font-size:0.8em; color:#28a745;" ng-if="x.del_rec != 0"><i class='fas fa-arrow-up' style='font-size:16px; color:#28a745;'></i>{{ x.del_rec }}</span></td>
-                      <td id="death1">{{ x.deceased_case }} <span style="font-size:0.8em; color:gray;" ng-if="x.del_dec != 0"><i class='fas fa-arrow-up' style='font-size:16px; color:gray;'></i> {{ x.del_dec }}</span> </td>
-                  </tr>
-              </tbody>
-          </table>
-      </div>
+<div class="loading bar">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
   </div>
+    <!-- <div class="top-nav" >
+        <ul>
+            <li class="active"><a href="home.html">Home</a></li>
+    
+            <li><a href="add_patient.php">Add Patient</a></li>
+        </ul>					
+    </div>
+    <br><br><br><br> -->
+    <div class="mudda" style="display:none;">
+ 
+    <div class="container">
+      <div class="chart-container" style="position:relative; display:inline-block; height:5vh; width:60vw; margin-left:15vw; margin-top:3vh;">
+      <button type="button" class="btn log" onClick="location.href='logout.php'" style="float:right; display:inline-block; margin-right:3vw;"  >Logout</button> 
+     
+      <button type="button" class="btn log" onClick="location.href='patient-display.php'" style="float:right; display:inline-block; margin-right:3vw;"  >View Patients</button> 
+        <button type="button" class="btn log" onClick="location.href='add_patient.php'" style="float:right; display:inline-block; margin-right:3vw;"  >Add Patient</button> 
+        <button type="button" class="btn log11" onClick="location.href='home.html'" style="float:right; display:inline-block; margin-right:3vw;"  >Home</button> 
+      
+      </div>
+    </div>
+    
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+                <h4 style="color:#e83a9a;">Total Cases</h4>
+            </div>
+            <div class="col-sm-3">
+                <h4 style="color:#1165d4;">Active Cases</h4>
+            </div>
+            <div class="col-sm-3">
+                <h4 style="color:#08ad05;">Recoveries</h4>
+            </div>
+            <div class="col-sm-3">
+                <h4 style="color:#d40b0b;">Deaths</h4>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3 conf">
+                <img src="virus.svg" width="40vh;"></img>
+                <span style="color:#e83a9a; font-size:1.3em;">{{ total.tot_con }}</span>&nbsp;
+                <span style="font-size:0.8em; color:red;" ng-if="total.tot_del_con != 0">{{ total.tot_del_con }}<i class='fas fa-arrow-up' style='font-size:16px'></i></span>
+            </div>
+            <div class="col-sm-3 act">
+                <img src="virus1.svg" width="40vh;"></img>
+                <span style="color:#1165d4; font-size:1.3em;">{{ total.tot_act }}</span>&nbsp;
+                <span style="font-size:0.8em; color:blue;">{{ total.tot_del_con-total.tot_del_dec-total.tot_del_rec }}<i class='fas fa-arrow-up' style='color:blue; font-size:16px'></i></span>
+            </div>
+            <div class="col-sm-3 rec">
+                <img src="recovered.svg" width="40vh;"></img>
+                <span style="color:#08ad05; font-size:1.3em;">{{ total.tot_rec }}</span>&nbsp;
+                <span style="font-size:0.8em; color:green;" ng-if="total.tot_del_rec != 0">{{ total.tot_del_rec }}<i class='fas fa-arrow-up' style='color:green; font-size:16px'></i></span>
+            </div>
+            <div class="col-sm-3 dec">
+                <img src="coffin.svg" width="40vh;"></img>
+                <span style="color:#d40b0b; font-size:1.3em;">{{ total.tot_dec   }}</span>&nbsp;
+                <span style="font-size:0.8em; color:red;" ng-if="total.tot_del_dec != 0">{{ total.tot_del_dec }}<i class='fas fa-arrow-up' style='color:red; font-size:16px'></i></span>
+            </div>
+        </div>
+    </div>
+    <div class="container" style="display:block; margin-top:10vh;" data-page-length='32'>
+        <table id="example" class="" style="width:70%;">
+            <thead id="#thead" style="color:#928f8f;">
+            <th>State/Union-Territory</th>
+            <th>Confirmed</th>
+            <th>Active</th>
+            <th>Recovered</th>
+            <th>Deceased</th>
+            </thead>
+            <tbody id="main">
+                <tr ng-repeat="x in result">
+                    <td id="state">{{ x.state }}</td>
+                    <td id="confirm">{{ x.confirmed }} <span style="font-size:0.8em; color:red;" ng-if="x.del_con != 0"><i class='fas fa-arrow-up' style='font-size:16px'></i>{{ x.del_con }}</span></td>
+                    <td id="active">{{ x.active }}</td>
+                    <td id="recovered">{{ x.recovered }} <span style="font-size:0.8em; color:#28a745;" ng-if="x.del_rec != 0"><i class='fas fa-arrow-up' style='font-size:16px; color:#28a745;'></i>{{ x.del_rec }}</span></td>
+                    <td id="death">{{ x.deceased }} <span style="font-size:0.8em; color:gray;" ng-if="x.del_dec != 0"><i class='fas fa-arrow-up' style='font-size:16px; color:gray;'></i> {{ x.del_dec }}</span> </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="container" style="margin-top:5vw;">
+        <div class="chart-container" style="position:relative; display:inline-block; height:5vh; width:60vw; margin-left:15vw; margin-top:10vh;">
+            <button type="button" class="btn log11" style="float:left; display:inline-block; margin-right:3vw;" onclick="begin()">Beginning</button>
+            <button type="button" class="btn log12" style="display:inline-block; margin-right:3vw;" onclick="month()">Month</button>
+            <button type="button" class="btn log13" style="display:inline-block; margin-right:3vw;" onclick="week()">Week</button>
+            <button type="button" class="btn log" style="float:right; display:inline-block;" onclick="change()">Logarithmic</button>
+        </div>
+    </div>
+    <div class="container" style="margin-top:5vw;">
+        <div class="chart-container" style="position:relative; height:20vh; width:60vw; margin-left:15vw; margin-top:10vh;">
+            <h3 class="st">Daily New Cases</h3>
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+    <div class="container" style="margin-top:25vw;">
+        <div class="chart-container" style="position:relative; height:20vh; width:60vw; margin-left:15vw; margin-top:10vh;">
+            <h3 class="st">Daily Recoveries</h3>
+            <canvas id="myChart1"></canvas>
+        </div>
+    </div>
+    <div class="container" style="margin-top:25vw;">
+        <div class="chart-container" style="position:relative; height:20vh; width:60vw; margin-left:15vw; margin-top:10vh;">
+            <h3 class="st">Daily Deaths</h3>
+            <canvas id="myChart2"></canvas>
+        </div>
+    </div>
+    <div class="container" style="margin-top:25vw;">
+        <div class="chart-container" style="position:relative; height:20vh; width:60vw; margin-left:15vw; margin-top:10vh;" >
+            <h3 id="st_test" class="st"></h3>
+            <canvas id="myChart3"></canvas>
+        </div>
+    </div>
+    <div id="district_table" class="container" style="display:none; margin-top:25vw; margin-bottom: 25px;" data-page-length='32'>
+        <h3 id="st_test1" class="st" style="margin-left: 15vw;"></h3>
+        <table id="example1" class="" style="width:70%; margin-top:10px" >
+            <thead id="#thead1" style="color:#928f8f;">
+            <th>District</th>
+            <th>Confirmed</th>
+            <th>Active</th>
+            <th>Recovered</th>
+            <th>Deceased</th>
+            </thead>
+            <tbody id="main1">
+                <tr ng-repeat="x in result1">
+                    <td id="state1">{{ x.city }}</td>
+                    <td id="confirm1">{{ x.confirmed_case }} <span style="font-size:0.8em; color:red;" ng-if="x.del_con != 0"><i class='fas fa-arrow-up' style='font-size:16px'></i>{{ x.del_con }}</span></td>
+                    <td id="active1">{{ x.active_case }}</td>
+                    <td id="recovered1">{{ x.recovered_case }} <span style="font-size:0.8em; color:#28a745;" ng-if="x.del_rec != 0"><i class='fas fa-arrow-up' style='font-size:16px; color:#28a745;'></i>{{ x.del_rec }}</span></td>
+                    <td id="death1">{{ x.deceased_case }} <span style="font-size:0.8em; color:gray;" ng-if="x.del_dec != 0"><i class='fas fa-arrow-up' style='font-size:16px; color:gray;'></i> {{ x.del_dec }}</span> </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 </body>
 <script>
       var app = angular.module('myApp', []);
@@ -395,9 +386,6 @@
       });
 
       $(document).ready(function () {
-
-          // $('.mudda').css('display','none');
-
           table1 = $('#example').DataTable({
             "autoWidth": false,
             "bInfo" : false,
@@ -412,12 +400,11 @@
             } 
             
           });
-
           setTimeout(function(){
             $('.loading').css('display','none');
             $('.mudda').css('display','block');
           },1500);
-
+          
       });
 
       app.controller('myCtrl', function($rootScope) {
@@ -426,15 +413,13 @@
               $rootScope.time_con = time_con;
               $rootScope.time_dec= time_dec;
               $rootScope.time_rec = time_rec;
-              $rootScope.result1 = state;
+          $rootScope.result1 = state;
           });
       
       $(".st").css('color', 'white');
       $('.log11').addClass("click1");
       $('.log12').removeClass("click1");
       $('.log13').removeClass("click1");
-
-      
 
       function change() { 
           if(type==''){

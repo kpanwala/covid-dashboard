@@ -1,3 +1,25 @@
+<?php
+session_start();
+if (!isset($_SESSION['login'])) {        //To prevent login using Back button of browser
+  header('location:home.html');  //As session as already been destroyed in logout.php thus it should not be set
+}
+
+error_reporting(0);
+include("include/config.php");
+$id=$_SESSION['id'];
+//$status=$_POST["End"];
+$ret=mysqli_query($con,"SELECT date,status FROM self_ass WHERE id = '$id'");
+$num=mysqli_fetch_array($ret);
+
+
+// if ($con->query($sql) === TRUE) {
+//     header("location:../user-display.php");
+// }
+// else
+// echo "Some Error occured";
+$con->close();       
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -245,18 +267,59 @@
   </div>
 
   <div class="mudda" style="display:none;">
-    <!-- <div class="top-nav" >
-        <ul>
-            <li class="active"><a href="home.html">Home</a></li>
-            <li><a href="helpline.html">Helpline</a></li>
-            <li><a href="helpline.html">Self-Assessment</a></li>
-        </ul>					
-    </div> -->
+  <div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog" >
+    <!-- Modal content-->
+    <div class="modal-content" style="background-color:#ffffcc">
+      <div class="modal-body">
+      <?php  
+      if($num>0)
+      {
+          //$sql="UPDATE self_ass SET status = '$status' WHERE id = '$id'";        
+          $status = $num['status'];
+          $d = $num['date']; //self-assessment date
+          $dates = explode(' ', $d);
+          $dat = $dates[0]; //only date in string format
+          $cur_date = date("Y-m-d");
+          $date1 = strtotime($dat);
+          $date2 = strtotime($cur_date);
+          $diff = abs($date2 - $date1);
+
+          $years = floor($diff / (365*60*60*24));
+          $months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
+          $days = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
+
+          echo "<h1 style='color:red; font-size:20px;'>Your last Status: ". $status . "</h1>";
+          echo "<p style='color:red; font-size:20px;'>Last Self-Assessment Taken On: ".$dat . "</p>";
+        // echo "<h1 style='color:red; font-size:20px;'>Difference: ".$days. "</h1>";
+        if( $days > 7){
+          echo "<p style='color:red; font-size:20px;'>Need to retake the Self-Assessment Test. </p>";
+        }
+      }
+      else
+      {
+          //$sql="INSERT INTO self_ass(id,status)values('$id','$status')";
+          $str = "You haven't taken self assessment test.<br>Take it Now.";
+          echo "<h1 style='color:red; font-size:25px;'>" . $str . "</p>";
+      }
+    ?>
+ 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" style="color:red">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
     <div class="container">
       <div class="chart-container" style="position:relative; display:inline-block; height:5vh; width:60vw; margin-left:15vw; margin-top:3vh;">
+      <button type="button" class="btn log" onClick="location.href='logout.php'" style="float:right; display:inline-block; margin-right:3vw;"  >Logout</button> 
+
         <button type="button" class="btn log" onClick="location.href='helpline.html'" style="float:right; display:inline-block; margin-right:3vw;"  >Helpline</button> 
-        <button type="button" class="btn log" onClick="location.href='../SelfAssessment/index.html'" style="float:right; display:inline-block; margin-right:3vw;"  >Self-Assessment</button> 
-        <button type="button" class="btn log11" style="float:right; display:inline-block; margin-right:3vw;"  >Home</button> 
+        <button type="button" class="btn log" onClick="location.href='SelfAssessment/index.html'" style="float:right; display:inline-block; margin-right:3vw;"  >Self-Assessment</button> 
+        <button type="button" class="btn log11" onClick="location.href='home.html'" style="float:right; display:inline-block; margin-right:3vw;"  >Home</button> 
+     
       </div>
     </div>
     <div class="container">
@@ -374,8 +437,8 @@
   </div>
 </body>
 <script>
+   
       var app = angular.module('myApp', []);
-
       var stat="";
       var bstat="";
       var table1;
@@ -389,7 +452,8 @@
 
       $(document).ready(function () {
           // $('.mudda').css('display','none');
-
+          $('#myModal').modal('show');
+          
           table1 = $('#example').DataTable({
             "autoWidth": false,
             "bInfo" : false,
@@ -425,7 +489,7 @@
       $('.log11').addClass("click1");
       $('.log12').removeClass("click1");
       $('.log13').removeClass("click1");
-
+      
       function change() { 
           if(type==''){
             type = 'logarithmic'; 

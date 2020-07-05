@@ -11,8 +11,8 @@ $password=md5($_POST['password']);
 $query=mysqli_query($con,"insert into users(name,address,city,gender,email,password) values('$fname','$address','$city','$gender','$email','$password')");
 if($query)
 {
-	echo "<script>alert('Successfully Registered. You can login now');</script>";
-	header('location:user-login.php');
+	echo "Successfully Registered. You can login now";
+	header('location:login.php');
 }
 }
 ?>
@@ -34,6 +34,8 @@ if($query)
 		<link rel="stylesheet" href="assets/css/styles.css">
 		<link rel="stylesheet" href="assets/css/plugins.css">
 		<link rel="stylesheet" href="assets/css/themes/theme-1.css" id="skin_color" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 		
 		<script type="text/javascript">
 function valid()
@@ -46,6 +48,21 @@ return false;
 }
 return true;
 }
+function hiding(){
+	$("#user-availability-status").hide();
+}
+function userAvailability() {
+jQuery.ajax({
+url: "user-availability.php",
+data:'username='+$("#email").val(),
+type: "POST",
+success:function(data){
+$("#user-availability-status").html(data);
+$("#user-availability-status").show();
+},
+error:function (){}
+});
+}
 </script>
 		
 
@@ -56,7 +73,7 @@ return true;
 		<div class="row">
 			<div class="main-login col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-4 col-md-offset-4">
 				<div class="logo margin-top-30">
-				<a href="../index.html"><h2>User Registration</h2></a>
+				<a style="text-decoration: none;"><h2>User Registration</h2></a>
 				</div>
 				<!-- start: REGISTER BOX -->
 				<div class="box-register">
@@ -69,13 +86,13 @@ return true;
 								Enter your personal details below:
 							</p>
 							<div class="form-group">
-								<input type="text" class="form-control" name="full_name" placeholder="Full Name" required>
+								<input type="text" pattern="[a-zA-Z \s]+" class="form-control" name="full_name" placeholder="Full Name" required>
 							</div>
 							<div class="form-group">
 								<input type="text" class="form-control" name="address" placeholder="Address" required>
 							</div>
 							<div class="form-group">
-								<input type="text" class="form-control" name="city" placeholder="City" required>
+								<input type="text" pattern="[a-zA-Z\s]+" class="form-control" name="city" placeholder="City" required>
 							</div>
 							<div class="form-group">
 								<label class="block" style = "color:lightblue;">
@@ -97,9 +114,9 @@ return true;
 							</p>
 							<div class="form-group">
 								<span class="input-icon">
-									<input type="email" class="form-control" name="email" id="email" onBlur="userAvailability()"  placeholder="Email" required>
+									<input type="email"  class="form-control" name="email" id="email" onBlur="userAvailability()" onfocus="hiding()" placeholder="Email" required>  
 									<i class="fa fa-envelope" style = "color:lightblue;"></i> </span>
-									 <span id="user-availability-status1" style="font-size:12px;"></span>
+									 <span id="user-availability-status" style="font-size:12px;"></span>
 							</div>
 							<div class="form-group">
 								<span class="input-icon">
@@ -122,7 +139,7 @@ return true;
 							<div class="form-actions">
 								<p style = "color:lightblue;">
 									Already have an account?
-									<a href="user-login.php">
+									<a href="login.php">
 										Log-in
 									</a>
 								</p>
