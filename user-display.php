@@ -289,11 +289,15 @@ $con->close();
           $months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
           $days = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
 
-          echo "<h1 style='color:red; font-size:20px;'>Your last Status: ". $status . "</h1>";
-          echo "<p style='color:red; font-size:20px;'>Last Self-Assessment Taken On: ".$dat . "</p>";
+          if($status=="Safe")
+          $color="green";
+          else
+          $color="red";
+          echo "<h1 style='color:".$color."; font-size:20px;'>Your last Status: ". $status . "</h1>";
+          echo "<p style='color:".$color."; font-size:20px;'>Last Self-Assessment Taken On: ".$dat . "</p>";
         // echo "<h1 style='color:red; font-size:20px;'>Difference: ".$days. "</h1>";
         if( $days > 7){
-          echo "<p style='color:red; font-size:20px;'>Need to retake the Self-Assessment Test. </p>";
+          echo "<p style='color:".$color."; font-size:20px;'>Need to retake the Self-Assessment Test. </p>";
         }
       }
       else
@@ -318,7 +322,7 @@ $con->close();
 
         <button type="button" class="btn log" onClick="location.href='helpline.html'" style="float:right; display:inline-block; margin-right:3vw;"  >Helpline</button> 
         <button type="button" class="btn log" onClick="location.href='SelfAssessment/index.html'" style="float:right; display:inline-block; margin-right:3vw;"  >Self-Assessment</button> 
-        <button type="button" class="btn log11" onClick="location.href='home.html'" style="float:right; display:inline-block; margin-right:3vw;"  >Home</button> 
+        <button type="button" class="btn log11" onClick="location.href='user-display.php'" style="float:right; display:inline-block; margin-right:3vw;"  >Home</button> 
      
       </div>
     </div>
@@ -460,9 +464,13 @@ $con->close();
             "paging": false,
             "order": [[ 2, "desc" ]],
             "rowCallback": function( row, data, index ) {
-              if(index%2 == 0){
-                  $(row).css({'background':'black','color':'white'});
-              }else{
+              if(index == 0){
+                  $(row).css({'background':'#ff9999','color':'white'});
+              }
+              else if(index%2==0){
+                $(row).css({'background':'black','color':'white'});
+              }
+              else{
                   $(row).css({'background':'#2b2a2a','color':'white'});
               }
             } 
@@ -1006,13 +1014,17 @@ $con->close();
                            "autoWidth": false,
                            "bInfo": false,
                            "paging": false,
-                           "order": [[0, "asc"]],
+                           "order": [[2, "desc"]],
                            "rowCallback": function (row, data, index) {
-                               if (index % 2 == 0) {
-                                   $(row).css({ 'background': 'black', 'color': 'white' });
-                               } else {
-                                   $(row).css({ 'background': '#2b2a2a', 'color': 'white' });
-                               }
+                            if(index == 0){
+                  $(row).css({'background':'#ff9999','color':'white'});
+              }
+              else if(index%2==0){
+                $(row).css({'background':'black','color':'white'});
+              }
+              else{
+                  $(row).css({'background':'#2b2a2a','color':'white'});
+              }
                            }
 
                        });
