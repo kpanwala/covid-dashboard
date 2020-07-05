@@ -11,6 +11,17 @@ include_once("include/config.php");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+  <link href="css/style.css" rel="stylesheet" type="text/css"  media="all" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <script src="http://momentjs.com/downloads/moment.js"></script>
     <title>Document</title>
 
     <!-- Datatable CSS -->
@@ -52,6 +63,7 @@ $(document).ready(function(){
        { data: 'tra_history' },
        { data: 'address' },
     ]
+    
   });
 
   $('#searchByName').keyup(function(){
@@ -108,11 +120,13 @@ $(document).ready(function(){
 <div >
 <div class="container">
       <div class="chart-container" style="position:relative; display:inline-block; height:5vh; width:60vw; margin-left:15vw; margin-top:3vh;">
-          <button type="button" class="btn log11" onClick="location.href='home.html'" style="float:right; display:inline-block; margin-right:3vw;"  >Home</button> 
+          <button type="button" class="btn log11" onClick="location.href='admin-display.php'" style="float:right; display:inline-block; margin-right:-200px;"  >Home</button> 
       </div>
     </div>
+    <br>
+    <br>
    <!-- Custom Filter -->
-   <table style = "background-color:black;">
+   <table style = "background-color:black;display:none;" >
      <tr>
        <td>
          <input type='text' id='searchByName' placeholder='Enter name'>
@@ -126,7 +140,6 @@ $(document).ready(function(){
        </td>
      </tr>
    </table>
-
    <!-- Table -->
    <table id='empTable' class='display dataTable' style = "background-color:black;" >
      <thead style = "color:white;">
