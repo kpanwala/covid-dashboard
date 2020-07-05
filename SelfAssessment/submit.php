@@ -13,7 +13,8 @@ if($num>0)
 }
 else
 {
-    $sql="INSERT INTO self_ass(id,status)values('$id','$status')";
+    $date=date("Y-m-d");
+    $sql="INSERT INTO self_ass(id,date,status)values('$id','$date','$status')";
 }
 if ($con->query($sql) === TRUE) {
     header("location:../user-display.php");
