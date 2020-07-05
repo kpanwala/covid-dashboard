@@ -251,7 +251,7 @@ if (!isset($_SESSION['login'])) {        //To prevent login using Back button of
      
       <button type="button" class="btn log" onClick="location.href='patient-display.php'" style="float:right; display:inline-block; margin-right:3vw;"  >View Patients</button> 
         <button type="button" class="btn log" onClick="location.href='add_patient.php'" style="float:right; display:inline-block; margin-right:3vw;"  >Add Patient</button> 
-        <button type="button" class="btn log11" onClick="location.href='home.html'" style="float:right; display:inline-block; margin-right:3vw;"  >Home</button> 
+        <button type="button" class="btn log11" onClick="location.href='admin-display.php'" style="float:right; display:inline-block; margin-right:3vw;"  >Home</button> 
       
       </div>
     </div>
@@ -392,9 +392,13 @@ if (!isset($_SESSION['login'])) {        //To prevent login using Back button of
             "paging": false,
             "order": [[ 2, "desc" ]],
             "rowCallback": function( row, data, index ) {
-              if(index%2 == 0){
-                  $(row).css({'background':'black','color':'white'});
-              }else{
+              if(index == 0){
+                  $(row).css({'background':'#ff9999','color':'white'});
+              }
+              else if(index%2==0){
+                $(row).css({'background':'black','color':'white'});
+              }
+              else{
                   $(row).css({'background':'#2b2a2a','color':'white'});
               }
             } 
@@ -937,13 +941,17 @@ if (!isset($_SESSION['login'])) {        //To prevent login using Back button of
                            "autoWidth": false,
                            "bInfo": false,
                            "paging": false,
-                           "order": [[0, "asc"]],
+                           "order": [[2, "desc"]],
                            "rowCallback": function (row, data, index) {
-                               if (index % 2 == 0) {
-                                   $(row).css({ 'background': 'black', 'color': 'white' });
-                               } else {
-                                   $(row).css({ 'background': '#2b2a2a', 'color': 'white' });
-                               }
+                            if(index == 0){
+                  $(row).css({'background':'#ff9999','color':'white'});
+              }
+              else if(index%2==0){
+                $(row).css({'background':'black','color':'white'});
+              }
+              else{
+                  $(row).css({'background':'#2b2a2a','color':'white'});
+              }
                            }
 
                        });
